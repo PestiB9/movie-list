@@ -1,3 +1,5 @@
+import NetInfo from '@react-native-community/netinfo';
+import {Alert} from 'react-native';
 import {Routes} from './environment/routes';
 import {RequestMethod} from './model';
 
@@ -7,6 +9,11 @@ async function serviceRequest(
   options?: RequestInit,
 ) {
   try {
+    const {isConnected} = await NetInfo.fetch();
+    if (!isConnected) {
+      Alert.alert('Search could not be performed: no network detected');
+      return [];
+    }
     const response = await fetch(url, {method, ...options});
     const parse = await response.json();
     return parse;
